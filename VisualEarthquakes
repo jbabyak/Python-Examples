@@ -1,0 +1,213 @@
+'''
+World-Wide Earthquake Watch
+
+Author: Jessica Babyak
+'''
+
+from turtle import *
+
+import csv
+
+import random
+
+import math
+
+
+def readFile(filename):
+    '''
+    (filename, str) -> dict
+    after inputing a string of a file
+    name, readfile will convert
+    the lines into latitude and longitudinal
+    points then place them into a dictinary
+    then return this dictionary.
+    '''
+    with open(filename, "r") as dataFile:
+
+        csvReader = csv.reader(dataFile)
+        title = next(csvReader) #read and skip titles
+        dataDict = {}
+        key = 0
+
+        for aLine in csvReader:
+            key = key + 1
+            lat = float(aLine[1])
+            long = float(aLine[2])
+            dataDict[key] = [long, lat]
+
+    return dataDict
+
+def euclidD(point1, point2):
+    '''
+    (point1: list, point2: list) -> number
+    finding the distance between two
+    points inside a list of points
+    '''
+
+    total = 0
+
+    for index in range(len(point1)):
+        diff = (point1[index] - point2[index]) ** 2
+        total = total + diff
+
+        euclidDistance = math.sqrt(total)
+
+        return euclidDistance
+
+def createCentroids(k, dataDict):
+    '''
+    (k: int, dataDict: dict) -> list
+    This function uses the dictonary
+    created from our earthquake data
+    file to find the epicenter of the
+    earthquakes occuring in the data file.
+    '''
+
+    centroids = []
+    centroidCount = 0
+    centroidKeys = []
+
+    while centroidCount < k:
+        rKey = random.randint(1, len(dataDict))
+        if rKey not in centroidKeys:
+            centroids.append(dataDict[rKey])
+            centroidKeys.append(rKey)
+            centroidCount = centroidCount + 1
+
+    return centroids
+
+def createClusters(k, centroids, dataDict, reapeats):
+    '''
+    (k: int, centroids: list, dataDict: dict,
+    reapeats: int) -> list
+    this function uses the list and dictionary
+    created from our file of earthquake data
+    in order to create the clusters of points
+    where the earthquakes occur. 
+    
+    '''
+
+    for aPass in range(reapeats):
+        print('****PASS', aPass + 1, '****')
+        clusters = []
+
+        for i in range(k):
+            clusters.append([])
+
+        for aKey in dataDict:
+            distances = []
+            for clusterIndex in range(k):
+                dToC = euclidD(dataDict[aKey], centroids[clusterIndex])
+                distances.append(dToC)
+            minDist = min(distances)
+            index = distances.index(minDist)
+
+            clusters[index].append(aKey)
+
+        dimensions = len(dataDict[1])
+
+        for clusterIndex in range(k):
+            sums = [0] * dimensions
+            for aKey in clusters[clusterIndex]:
+                dataPoints = dataDict[aKey]
+
+                for ind in range(len(dataPoints)):
+                    sums[ind] = sums[ind] + dataPoints[ind]
+
+                for ind in range(len(sums)):
+                    clusterLen = len(clusters[clusterIndex])
+                    if clusterLen != 0:
+                        sums[ind] = sums[ind] / clusterLen
+                centroids[clusterIndex] = sums
+
+        '''for c in clusters:
+            print('CLUSTERS')
+
+            for key in c:
+                print(dataDict[key], end = " ")
+            print()'''
+
+        return clusters
+
+def jump(x, y):
+    '''
+    (x: int, y: int) -> none
+    input two integer values, then
+    turtle will jump to this point.
+    '''
+
+    pu()
+    setpos(x, y)
+    pd()
+
+    return
+
+    
+
+def visualizeQuakes(dataFile):
+    '''
+    (dataFile: str) -> function
+    using this function to define the
+    variables needed to draw using
+    the previous functions.
+    '''
+
+    dataDict = readFile(dataFile)
+    centroids = createCentroids(6, dataDict)
+    clusters = createClusters(6, centroids, dataDict, 7)
+
+    call = eqDraw(6, dataDict, clusters)
+
+    return call
+
+def eqDraw(k, dataDict, clusters):
+    '''
+    (k: int, dataDict: dict, clusters: list) -> none
+    using input returned by previous functions,
+    this function will draw different points
+    on a map represented by earthquakes.
+    '''
+    
+    tracer(0, 0) 
+    bgpic("world_map_1800_900.gif")
+    screensize(1800, 900)
+    
+    wFactor = (screensize()[0]/2)/180
+    hFactor = (screensize()[1]/2)/90
+    
+    hideturtle()
+    speed('fastest')
+    penup()
+    
+    colorList = ["red", "lawngreen", "blue", "orange", "cyan", "yellow"]
+    
+    for clusterIndex in range(k):
+        pencolor(colorList[clusterIndex])
+        for aKey in clusters[clusterIndex]:
+            lon = dataDict[aKey][0]
+            lat = dataDict[aKey][1]
+            jump(lon * wFactor, lat * hFactor)
+            dot()
+             
+    update()
+    
+    exitonclick()
+    
+    return
+
+def main():
+    '''
+    (none) -> none
+    main function calles visulizeQuakes
+    and defines dataFile as the file we
+    are using.
+    '''
+
+    dataFile = 'world_equakes.csv'
+
+    visualizeQuakes(dataFile)
+
+    return
+
+main()
+    
