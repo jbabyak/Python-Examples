@@ -1,0 +1,86 @@
+'''
+Rain Fall
+
+Author: Jessica Babyak
+
+'''
+
+def rainData(f):
+
+    '''
+    (f: str) -> dict
+    after inputing a string of a filename
+    rainData will convert each entry of the
+    file, spliting them on the spaces between
+    each one, into a list then will convert this
+    list into a dictionary.
+
+    >>> rainData('rainfall.txt')
+    {1: '.2', 2: '4', 3: '.16', 4: '.2', 5: '.16', 6: '.15',
+    7: '.2', 8: '.12', 9: '.15', 10: '.16', 11: '.16', 12: '.16',
+    13: '.15', 14: '.16', 15: '.2'}
+    
+    '''
+
+    
+    with open(f, 'r') as rain:
+
+        rdict = {}
+
+        key = 0
+
+        amounts = []
+        rain.readline()
+        for line in rain:
+            values = line.strip().split(' ')
+            amounts.append(values)
+        amounts = amounts[0]
+        for key in range(1, 16):
+            rdict[key] = amounts[key-1]
+
+    
+
+    return rdict
+
+def reportOneDay(date, rdict):
+
+    '''
+    (date: int, rdict: dict) -> none
+
+    reportOneDay will go through the
+    dictionary from the first function
+    and return the value associated with
+    the inputed key 'date' and will
+    print a message based on the amount
+    of rainfall had on this inputed date.
+
+    
+    >>> reportOneDay(1, rdict)
+    The rainfall on day 1 was 0.2 inches.
+    
+    '''
+
+
+    amount = rdict.get(date)
+
+    amount = float(amount)
+
+    if amount >= 4:
+        print('HEAVY RAIN ALERT:', 'The rainfall on day', date,
+              'was', amount, 'inches.')
+    else:
+        print('The rainfall on day', date, 'was', amount, 'inches.')
+
+        return
+
+def main():
+
+    rdict = rainData('rainfall.txt')
+
+    for date in range(1, 16):
+
+        reportOneDay(date, rdict)
+
+    return
+
+main()
