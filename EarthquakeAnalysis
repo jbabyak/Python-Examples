@@ -1,0 +1,210 @@
+'''
+Title: Data Analysis
+
+Author: Jessica Babyak
+'''
+
+def mean(aList):
+    ''' (aList: list) -> number
+    after inputing a list of numbers,
+    we add up all the inputs of aList
+    and then divide it by the length of
+    the input to find the mean
+    >>> mean([1, 2, 3, 3, 1, 4, 5])
+    2.7142857142857144
+    >>> mean([1, 2])
+    1.5
+    >>>mean([0, 0])
+    0.0
+    '''
+    mean = sum(aList) / len(aList)
+
+    return mean
+
+def median(aList):
+    '''(aList: list) -> number
+    after inputing a list of numbers,
+    we make a copy of this list using the slice
+    operator and then sort this list. we then
+    use the function isEven to determine if
+    the length of aList is even or odd
+    and use this information to find the middle
+    number inputed in the list.
+    >>> median([1, 2, 3, 3, 1, 4, 5])
+    3
+    >>>median([1, 2])
+    1.5
+    >>> median([0, 0])
+    0.0
+    '''
+    copyList = aList[:] #make a copy using slice operator
+    copyList.sort()
+    length = len(copyList)
+    
+    if isEven(length) == 'even':
+        rightMid = length // 2
+        leftMid = rightMid - 1
+        median = (copyList[leftMid] + copyList[rightMid]) / 2
+    else:
+        mid = length // 2
+        median = copyList[mid]
+
+    return median
+
+def isEven(n):
+    ''' (n: number) -> str
+    if the number n is divisable by 2
+    with no remainder then the numnber
+    is even, if not it is odd
+    >>> isEven(2)
+    'even'
+    >>> isEven(0)
+    'even'
+    >>> isEven(1)
+    'odd'
+    '''
+    if n % 2 == 0:
+        return 'even'
+    else:
+        return 'odd'
+
+def mode(aList):
+    '''(aList: list) -> list
+    after inputing a list of numbers,
+    mode will check for which numbers
+    occur the most in the list. Whatever
+    number(s) occur the most will be returned
+    in a list.
+    >>> mode([1, 2, 3, 3, 1, 4, 5])
+    [1, 3]
+    >>> mode([1, 2])
+    [1, 2]
+    >>> mode([0])
+    [0]
+    >>> mode([1, 1, 1, 0, 1])
+    [1]
+    '''
+    countDict = genFrequenceyTable(aList)
+    
+
+    countList = countDict.values()
+    maxCount = max(countList)
+
+    modeList = []
+    for item in countDict:
+         if countDict[item] == maxCount:
+             modeList.append(item)
+
+    return modeList
+
+
+    
+
+def frequencyTable(aList):
+    '''(aList: list) -> none
+    after inputing a list, frequencyTable
+    will check each item in this list to see
+    if the item is in the empty dictionary,
+    if it is we add one to countDict, if not
+    countDict is 1.
+    > frequencyTable([1, 2, 3, 3, 1, 4, 5])
+    ITEM FREQUENCEY
+    1     2
+    2     1
+    3     2
+    4     1
+    5     1
+    > frequencyTable([1, 2])
+    ITEM FREQUENCEY
+    1     1
+    2     1
+    > frequencyTable([0])
+    ITEM FREQUENCEY
+    0     1
+    '''
+    
+    countDict = genFrequenceyTable(aList)
+
+    keyList = list(countDict.keys())
+    keyList.sort()
+
+    valueList = list(countDict.values())
+    
+
+    print("ITEM", "FREQUENCEY")
+
+    for item in range(0, len(keyList)):
+        print(keyList[item], "   ", valueList[item])
+
+    return
+
+def genFrequenceyTable(aList):
+    ''' (aList: list) -> dictionary
+    this function will generate
+    a frequency dictionary from the
+    counts being generated in mode and
+    frequenceyTable.
+    > genFrequenceyTable([1, 2, 3, 3, 1, 4, 5])
+    {1: 2, 2: 1, 3: 2, 4: 1, 5: 1}
+    > genFrequenceyTable([1, 2])
+    {1: 1, 2: 1}
+    > genFrequenceyTable([0])
+    {0: 1}
+    '''
+
+    countDict = {}
+
+    for item in aList:
+        if item in countDict:
+            countDict[item] = countDict[item] + 1
+        else:
+            countDict[item] = 1
+
+    return countDict
+
+def main():
+
+    equakes = [5.3, 3.0, 2.6, 4.4, 2.9, 4.8, 4.3,
+               2.6, 2.9, 4.9, 2.5, 4.8, 4.2, 2.6,
+               4.8, 2.7, 5.0, 2.7, 2.8, 4.3, 3.1,
+               4.1, 2.8, 5.8, 2.5, 3.9, 4.8, 2.9,
+               2.5, 4.9, 5.0, 2.5, 3.2, 2.6, 2.7,
+               4.8, 4.1, 5.1, 4.7, 2.6, 2.9, 2.7,
+               3.3, 3.0, 4.4, 2.7, 5.7, 2.5, 5.1,
+               2.5, 4.4, 4.6, 5.7, 4.5, 4.7, 5.1,
+               2.9, 3.3, 2.7, 2.8, 2.9, 2.6, 5.3,
+               6.0, 3.0, 5.3, 2.7, 4.3, 5.4, 4.4,
+               2.6, 2.8, 4.4, 4.3, 4.7, 3.3, 4.0,
+               2.5, 4.9, 4.9, 2.5, 4.8, 3.1, 4.9,
+               4.4, 6.6, 3.3, 2.5, 5.0, 4.8, 2.5,
+               4.2, 4.5, 2.6, 4.0, 3.3, 3.1, 2.6,
+               2.7, 2.9, 2.7, 2.9, 3.3, 2.8, 3.1,
+               2.5, 4.3, 3.2, 4.6, 2.8, 4.8, 5.1,
+               2.7, 2.6, 3.1, 2.9, 4.2, 4.8, 2.5,
+               4.5, 4.5, 2.8, 4.7, 4.6, 4.6, 5.1,
+               4.2, 2.8, 2.5, 4.5, 4.6, 2.6, 5.0,
+               2.8, 2.9, 2.7, 3.1, 2.6, 2.5, 3.2,
+               3.2, 5.2, 2.8, 3.2, 2.6, 5.3, 5.5,
+               2.7, 5.2, 6.4, 4.2, 3.1, 2.8, 4.5,
+               2.9, 3.1, 4.3, 4.9, 5.2, 2.6, 6.7,
+               2.7, 4.9, 3.0, 4.9, 4.7, 2.6, 4.6,
+               2.5, 3.2, 2.7, 6.2, 4.0, 4.6, 4.9,
+               2.5, 5.1, 3.3, 2.5, 4.7, 2.5, 4.1,
+               3.1, 4.6, 2.8, 3.1, 6.3]
+
+    freqtable = frequencyTable(equakes)
+
+    meanvalue = mean(equakes)
+
+    medianvalue = median(equakes)
+
+    modevalue = mode(equakes)
+
+    print(freqtable)
+    print("Mean value is:", meanvalue)
+    print("Median value is:", medianvalue)
+    print("Mode is:", modevalue)
+
+    return
+
+main()
