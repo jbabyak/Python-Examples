@@ -1,0 +1,42 @@
+from numpy.lib.function_base import append
+from scipy.spatial import Voronoi, voronoi_plot_2d
+from scipy.spatial import Delaunay
+import matplotlib.pyplot as plt
+import numpy as np
+import random
+
+# number of seeds
+n = 200
+
+# size of square
+s = 2
+
+# number of decimal points
+d = 2
+
+pointlist = []
+
+for k in range(0,n):
+  x = round(random.uniform(-s,s),d)
+  y = round(random.uniform(-s,s),d)
+  xy = [x,y]
+  pointlist.append(xy)
+
+points = np.array(pointlist)
+
+# Voronoi Diagram
+
+# computues the convex hull
+
+vor = Voronoi(points)
+
+fig = voronoi_plot_2d(vor)
+plt.show()
+
+#Delaunay Triangulization
+
+tri = Delaunay(points)
+
+plt.triplot(points[:,0], points[:,1], tri.simplices)
+plt.plot(points[:,0], points[:,1], 'o')
+plt.show()
